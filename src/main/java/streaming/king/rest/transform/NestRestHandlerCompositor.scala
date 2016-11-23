@@ -5,13 +5,12 @@ import java.util
 import org.apache.log4j.Logger
 import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.dstream.DStream
-import org.elasticsearch.spark._
 import org.joda.time.DateTime
-import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import serviceframework.dispatcher.{Compositor, Processor, Strategy}
 import streaming.core.compositor.spark.streaming.CompositorHelper
 import streaming.king.rest.service.RestFetchUtil
 
+import org.elasticsearch.spark._
 import scala.collection.JavaConversions._
 
 

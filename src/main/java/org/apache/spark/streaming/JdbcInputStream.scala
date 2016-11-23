@@ -19,7 +19,7 @@ class JdbcInputStream[T: ClassTag](_sqlContext: SQLContext, _ssc: StreamingConte
   def compute(validTime: Time): Option[RDD[T]] = {
     logInfo("Computing RDD for time " + validTime)
     val df = _sqlContext.read.format("jdbc").options(_jdbcParams).load()
-    val rdd: RDD[String] = df.toJSON
+    val rdd: RDD[String] = df.toJSON.rdd
     val metadata = Map(StreamInputInfo.METADATA_KEY_DESCRIPTION -> "")
     val inputInfo = StreamInputInfo(id, rdd.count(), metadata)
     ssc.scheduler.inputInfoTracker.reportInfo(validTime, inputInfo)
