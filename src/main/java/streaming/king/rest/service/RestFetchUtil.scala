@@ -141,13 +141,9 @@ object RestFetchUtil {
         val defaultValue: String = if (syncType == "DATE") DateTime.now().toString(ft) else syncPattern
         val syncDefaultValue: String = if (syncValue == "-") defaultValue else syncValue
         val syncLong: Long = if (syncType == "DATE") DateTime.parse(syncDefaultValue, ft).getMillis else syncDefaultValue.toLong
-        val syncString: String = if (syncType == "DATE") {
-          val intervals: Array[Long] = syncInterval.split("_").map(i => i.toLong)
-          val nowLong: Long = DateTime.parse(DateTime.now().toString(ft), ft).getMillis
-          val minusLong = nowLong - syncLong
-          val intervalsValid = intervals.filter(_ <= minusLong)
-          val interval: Long = if (intervalsValid.isEmpty) nowLong else intervalsValid.max + syncLong
-          new DateTime(interval).toString(ft)
+        val syncString: String = if (syncType == "DATE" || syncType == "DELAY") {
+          val delayNum = if (syncType == "DATE") 1 else 2;
+          syncDate2String(syncInterval, syncLong, ft, delayNum)
         } else {
           (syncLong + syncInterval.toLong).toString
         }
@@ -156,5 +152,14 @@ object RestFetchUtil {
       }
       case _ => Map("syncValue" -> "-")
     }
+  }
+
+  def syncDate2String(syncInterval: String, syncLong: Long, ft: DateTimeFormatter, delayNum: Int) = {
+    val intervals: Array[Long] = syncInterval.split("_").map(i => i.toLong)
+    val nowLong: Long = DateTime.parse(DateTime.now().toString(ft), ft).getMillis
+    val minusLong = nowLong - syncLong*delayNum
+    val intervalsValid = intervals.filter(_ <= minusLong)
+    val interval: Long = if (intervalsValid.isEmpty) nowLong else intervalsValid.max + syncLong
+    new DateTime(interval).toString(ft)
   }
 }
