@@ -158,9 +158,9 @@ object RestFetchUtil {
   def syncDate2String(syncInterval: String, syncLong: Long, ft: DateTimeFormatter, delayNum: Int) = {
     val intervals: Array[Long] = syncInterval.split("_").map(i => i.toLong)
     val nowLong: Long = DateTime.parse(DateTime.now().toString(ft), ft).getMillis
-    val minusLong = nowLong - syncLong * delayNum
-    val intervalsValid = intervals.filter(_ <= minusLong)
-    val interval: Long = if (intervalsValid.isEmpty) nowLong else intervalsValid.max + syncLong
+    val minusLong = nowLong - syncLong
+    val intervalsValid = intervals.filter(l => l * delayNum <= minusLong)
+    val interval: Long = if (intervalsValid.isEmpty) syncLong else intervalsValid.max + syncLong
     new DateTime(interval).toString(ft)
   }
 }
